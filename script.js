@@ -45,9 +45,61 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.1 });
 
-document.querySelectorAll('.skill-card, .exp-card, .edu-card, .cert-card, .contact-item').forEach(el => {
+document.querySelectorAll('.skill-card, .exp-card, .edu-card, .cert-card, .contact-item, .doc-card').forEach(el => {
   el.style.opacity = '0';
   el.style.transform = 'translateY(16px)';
   el.style.transition = 'opacity 0.5s ease, transform 0.5s ease, border-color 0.3s ease, box-shadow 0.3s ease';
   observer.observe(el);
+});
+
+// Lightbox Modal for Documentation
+const lightboxModal = document.getElementById('lightboxModal');
+const lightboxImg = document.getElementById('lightboxImg');
+const lightboxBadge = document.getElementById('lightboxBadge');
+const lightboxTitle = document.getElementById('lightboxTitle');
+const lightboxDesc = document.getElementById('lightboxDesc');
+const lightboxClose = document.getElementById('lightboxClose');
+const lightboxBackdrop = document.getElementById('lightboxBackdrop');
+
+function openLightbox(card) {
+  const imgSrc = card.getAttribute('data-img');
+  const badge = card.getAttribute('data-badge');
+  const title = card.getAttribute('data-title');
+  const desc = card.getAttribute('data-desc');
+
+  if (imgSrc) {
+    lightboxImg.src = imgSrc;
+    lightboxImg.alt = title || 'Documentation Image';
+    lightboxBadge.textContent = badge || 'Documentation';
+    lightboxTitle.textContent = title || '';
+    lightboxDesc.textContent = desc || '';
+
+    lightboxModal.classList.add('active');
+    lightboxModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeLightbox() {
+  lightboxModal.classList.remove('active');
+  lightboxModal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+document.querySelectorAll('.doc-card').forEach(card => {
+  card.addEventListener('click', () => openLightbox(card));
+});
+
+if (lightboxClose) {
+  lightboxClose.addEventListener('click', closeLightbox);
+}
+
+if (lightboxBackdrop) {
+  lightboxBackdrop.addEventListener('click', closeLightbox);
+}
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && lightboxModal.classList.contains('active')) {
+    closeLightbox();
+  }
 });
